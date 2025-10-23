@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Cập nhật hàng hóa</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'sanpham/css/style.css' %}">
+</head>
+<body>
+<section class="form-container">
+  <div class="header-box">
+    {% if sanpham %}
+      CẬP NHẬT THÔNG TIN HÀNG HÓA
+    {% else %}
+      THÊM MỚI HÀNG HÓA
+    {% endif %}
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label>Tên hàng hóa:</label>
+      {{ form.ten_hang_hoa }}
+    </div>
+
+    <div class="form-group">
+      <label>Nhóm hàng:</label>
+      {{ form.nhom_hang }}
+    </div>
+
+    <div class="form-group">
+      <label>Tồn kho:</label>
+      {{ form.ton_kho }}
+    </div>
+
+    <div class="form-group">
+      <label>Đơn giá:</label>
+      {{ form.don_gia }}
+    </div>
+
+    <!-- PHẦN CHỌN ẢNH -->
+    <div class="form-group">
+  <label>Hình ảnh:</label>
+  <div class="image-upload">
+    <label class="upload-box">
+      {% if sanpham.hinh_anh %}
+        <img src="{{ sanpham.hinh_anh.url }}" alt="Ảnh hàng hóa" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
+      {% else %}
+        <img src="{% static 'sanpham/img/upload-icon.png' %}" alt="Upload icon">
+      {% endif %}
+      {{ form.hinh_anh }}
+    </label>
+  </div>
+</div>
+
+
+
+    <div class="form-group">
+      <label>Đơn vị tính:</label>
+      {{ form.don_vi_tinh }}
+    </div>
+
+    <h4>Mô tả hàng hóa</h4>
+
+    <div class="form-group">
+      <label>Màu sắc:</label>
+      {{ form.mau_sac }}
+    </div>
+
+    <div class="form-group">
+      <label>Kích cỡ:</label>
+      {{ form.kich_co }}
+    </div>
+
+    <div class="form-group">
+      <label>Chất liệu:</label>
+      {{ form.chat_lieu }}
+    </div>
+
+    <div class="form-group">
+      <label>Ghi chú:</label>
+      {{ form.ghi_chu }}
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn save">Lưu</button>
+      <a href="{% url 'sanpham:list' %}" class="btn cancel">Hủy</a>
+    </div>
+  </form>
+</section>
+
+<!-- SCRIPT XEM TRƯỚC ẢNH -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const input = document.querySelector('input[type="file"][name="hinh_anh"]');
+  const uploadBox = document.querySelector('.upload-box');
+  const img = uploadBox.querySelector('img');
+  const p = uploadBox.querySelector('p');
+
+  if (input) {
+    input.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          img.src = e.target.result;
+          img.style.width = "100%";
+          img.style.height = "100%";
+          img.style.objectFit = "cover";
+          if (p) p.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+});
+</script>
+
+
+</body>
+</html>

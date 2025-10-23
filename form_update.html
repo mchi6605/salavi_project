@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Cập nhật hàng hóa</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'sanpham/css/style.css' %}">
+  <style>
+    .image-upload {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .upload-box {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .upload-text {
+      margin-top: 10px;
+      color: #666;
+      font-size: 14px;
+    }
+    #preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    input[type="file"] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+<section class="form-container">
+  <div class="header-box">
+    {% if sanpham %}
+      CẬP NHẬT THÔNG TIN HÀNG HÓA
+    {% else %}
+      THÊM MỚI HÀNG HÓA
+    {% endif %}
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label>Tên hàng hóa:</label>
+      {{ form.ten_hang_hoa }}
+    </div>
+
+    <div class="form-group">
+      <label>Nhóm hàng:</label>
+      {{ form.nhom_hang }}
+    </div>
+
+    <div class="form-group">
+      <label>Tồn kho:</label>
+      {{ form.ton_kho }}
+    </div>
+
+    <div class="form-group">
+      <label>Đơn giá:</label>
+      {{ form.don_gia }}
+    </div>
+
+    <div class="form-group">
+      <label>Hình ảnh:</label>
+      <div class="image-upload">
+        <label class="upload-box">
+          {% with image_url=sanpham.hinh_anh.url|default:'' %}
+          <img
+            id="preview-image"
+            src="{% if sanpham and sanpham.hinh_anh %}{{ image_url }}{% else %}{% static 'sanpham/img/upload-icon.png' %}{% endif %}"
+            alt="Ảnh hàng hóa"
+          >
+          {% if not sanpham.hinh_anh %}
+            <p class="upload-text">Tải ảnh lên</p>
+          {% endif %}
+          {% endwith %}
+          <input type="file" name="hinh_anh" id="hinh_anh" accept="image/*">
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Đơn vị tính:</label>
+      {{ form.don_vi_tinh }}
+    </div>
+
+    <h4>Mô tả hàng hóa</h4>
+
+    <div class="form-group">
+      <label>Màu sắc:</label>
+      {{ form.mau_sac }}
+    </div>
+
+    <div class="form-group">
+      <label>Kích cỡ:</label>
+      {{ form.kich_co }}
+    </div>
+
+    <div class="form-group">
+      <label>Chất liệu:</label>
+      {{ form.chat_lieu }}
+    </div>
+
+    <div class="form-group">
+      <label>Ghi chú:</label>
+      {{ form.ghi_chu }}
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn save">Lưu</button>
+      <a href="{% url 'sanpham:list' %}" class="btn cancel">Hủy</a>
+    </div>
+  </form>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.getElementById('hinh_anh');
+  const preview = document.getElementById('preview-image');
+  const text = document.querySelector('.upload-text');
+
+  if (input && preview) {
+    input.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          if (text) text.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>

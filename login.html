@@ -1,0 +1,189 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+{% block title %}Đăng nhập Salavi{% endblock %}
+{% block extrastyle %}
+{{ block.super }}
+<style>
+body.login {
+    background-color: #ffe6ee;
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-container {
+    display: flex;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    width: 800px;
+    max-width: 90%;
+    transform: translateY(-20px);
+}
+.login-left {
+    flex: 1;
+    background-color: #fff5f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-left h1 {
+    font-size: 75px;
+    font-family: "Brush Script MT", cursive;
+    color: #f06292;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 0;
+}
+.login-right {
+    flex: 1;
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.login-right h2 {
+    text-align: center;
+    color: #d81b60;
+    margin-bottom: 25px;
+    font-size: 36px;
+    font-weight: bold;
+}
+.form-row {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+.form-row i {
+    color: #666;
+    font-size: 16px;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+.form-row input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 15px;
+    box-sizing: border-box;
+}
+.submit-row input {
+    background-color: #f06292;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px; /* Match padding with input fields */
+    width: 100%; /* Match width with input fields */
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    font-size: 16px;
+    box-shadow: 0 3px 8px rgba(240, 98, 146, 0.4);
+    transition: background 0.2s ease, transform 0.1s ease;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+.submit-row input:hover {
+    background-color: #ec407a;
+    transform: translateY(-2px);
+}
+.password-reset-link {
+    text-align: right;
+    margin-bottom: 15px;
+}
+.password-reset-link a {
+    font-size: 13px;
+    color: #1976d2;
+    text-decoration: none;
+}
+.password-reset-link a:hover {
+    text-decoration: underline;
+}
+/* Ẩn header admin và sidebar */
+#header, #branding, #nav-sidebar, .breadcrumbs, #footer {
+    display: none !important;
+}
+#content {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.errornote {
+    color: #dc3545;
+    margin-bottom: 15px;
+}
+</style>
+{{ form.media }}
+{% endblock %}
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div class="login-container">
+        <div class="login-left">
+            <h1>Salavi</h1>
+        </div>
+        <div class="login-right">
+            <h2>{% translate 'Đăng nhập Salavi' %}</h2>
+            {% if form.errors and not form.non_field_errors %}
+            <p class="errornote">
+                {% blocktranslate count counter=form.errors.items|length %}
+                    Please correct the error below.
+                {% plural %}
+                    Please correct the errors below.
+                {% endblocktranslate %}
+            </p>
+            {% endif %}
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+            <p class="errornote">{{ error }}</p>
+            {% endfor %}
+            {% endif %}
+            <div id="content-main">
+                {% if user.is_authenticated %}
+                <p class="errornote">
+                    {% blocktranslate trimmed %}
+                        You are authenticated as {{ username }}, but are not authorized to
+                        access this page. Would you like to login to a different account?
+                    {% endblocktranslate %}
+                </p>
+                {% endif %}
+                <form action="{{ app_path }}" method="post" id="login-form" style="width: 90%; max-width: 320px;">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <i class="fa fa-user"></i>
+                        {{ form.username.errors }}
+                        {{ form.username }}
+                    </div>
+                    <div class="form-row">
+                        <i class="fa fa-lock"></i>
+                        {{ form.password.errors }}
+                        {{ form.password }}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </div>
+                    {% url 'admin_password_reset' as password_reset_url %}
+                    {% if password_reset_url %}
+                    <div class="password-reset-link">
+                        <a href="{{ password_reset_url }}">{% translate 'Quên mật khẩu?' %}</a>
+                    </div>
+                    {% endif %}
+                    <div class="submit-row">
+                        <input type="submit" value="{% translate 'Đăng nhập' %}">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+{% block branding %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block usertools %}{% endblock %}
+{% block footer %}{% endblock %}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh mục sản phẩm</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'sanpham/css/style.css' %}">
+</head>
+<body>
+<header>
+  <img src="{% static 'sanpham/img/logo.jpg' %}" alt="Logo" class="logo">
+  <h1>QUẢN LÝ KHO HÀNG SALAVI</h1>
+  <div class="user">
+  {{ user.get_full_name }}
+  <a href="#" class="bell">
+    <img src="{% static 'sanpham/img/bell.png' %}" alt="Thông báo" class="icon">
+  </a>
+  <a href="{% url 'logout' %}" class="logout">
+    <img src="{% static 'sanpham/img/logout.png' %}" alt="Đăng xuất" class="icon">
+  </a>
+</div>
+
+</header>
+
+<nav>
+  <a href="#">TỔNG QUAN</a>
+  <a href="#" class="active">DANH MỤC</a>
+  <a href="#">XUẤT KHO</a>
+  <a href="#">NHẬP KHO</a>
+  <a href="#">KIỂM KÊ</a>
+  <a href="#">BÁO CÁO</a>
+</nav>
+
+<section class="list-container">
+  <div class="header-box">DANH MỤC SẢN PHẨM</div>
+
+  <div class="controls-row">
+    <form method="get" class="search-form">
+  <input type="text" name="q" placeholder="Tìm theo mã, tên hoặc nhóm hàng" value="{{ search_text }}">
+
+  <select name="tinh_trang">
+    <option value="">Tất cả</option>
+    <option value="CONNHIEU" {% if tinh_trang == 'CONNHIEU' %}selected{% endif %}>Còn nhiều</option>
+    <option value="SAPHET" {% if tinh_trang == 'SAPHET' %}selected{% endif %}>Sắp hết</option>
+    <option value="HET" {% if tinh_trang == 'HET' %}selected{% endif %}>Hết</option>
+  </select>
+
+  <button type="submit">Tìm kiếm</button>
+</form>
+
+
+    <a href="{% url 'sanpham:add' %}" class="add-btn">+ Thêm hàng hóa</a>
+  </div>
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Mã hàng</th>
+        <th>Tên hàng</th>
+        <th>Nhóm hàng</th>
+        <th>Đơn vị tính</th>
+        <th>Tồn kho</th>
+        <th>Đơn giá</th>
+        <th>Tình trạng</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sp in sanphams %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ sp.ma_hang_hoa }}</td>
+        <td>{{ sp.ten_hang_hoa }}</td>
+        <td>{{ sp.nhom_hang }}</td>
+        <td>{{ sp.don_vi_tinh }}</td>
+        <td>{{ sp.ton_kho }}</td>
+        <td>{{ sp.don_gia }}</td>
+        <td>
+          {% if sp.tinh_trang == 'CONNHIEU' %}
+            <span class="badge green">Còn nhiều</span>
+          {% elif sp.tinh_trang == 'SAPHET' %}
+            <span class="badge yellow">Sắp hết</span>
+          {% else %}
+            <span class="badge red">Hết</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'sanpham:edit' sp.pk %}" class="edit">✏️</a>
+          <a href="{% url 'sanpham:delete' sp.pk %}" class="delete">🗑️</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+</body>
+</html>
